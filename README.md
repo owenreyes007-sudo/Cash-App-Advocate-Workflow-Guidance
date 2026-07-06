@@ -1,27 +1,191 @@
-# Cash App Advocate Workflow Assistant
+# Advocate Workflow Guidance Tool
 
-A browser-based decision-support tool that guides advocates from customer verification through investigation, resolution, documentation, and call closure.
+A static browser-based decision-support tool for guiding advocates through verification, investigation, resolution, documentation, and call closure.
 
-The application is a static single-page app built with HTML, CSS, and vanilla JavaScript. It can be opened locally or deployed to a static host such as GitHub Pages.
+The project now has two separate surfaces:
 
-## Current Features
+- **Advocate build:** Public/internal operational interface with no Admin tab, password form, or access configuration.
+- **Admin build:** Local or internally hosted workflow-management interface. This folder is excluded from Git by default.
 
-- Conditional Line of Business, channel, category, scenario, and sub-scenario intake
+## Project Structure
+
+```text
+Cash App Workflow Tool/
+|-- index.html                         # Advocate build entry point
+|-- app.js                             # Shared workflow engine
+|-- styles.css                         # Shared interface styles
+|-- README.md
+|-- .gitignore                         # Excludes the Admin build
+|-- data/
+|   |-- workflow-data.js               # Published advocate workflow dataset
+|   `-- misdirected-payment-workflow.js
+`-- admin/                             # Local/internal only; ignored by Git
+    |-- index.html                     # Admin build entry point
+    |-- admin-access.js                # Local Admin access behavior
+    |-- access-config.js               # Temporary local access configuration
+    `-- README.md                       # Local Admin instructions
+```
+
+## Advocate Build
+
+Open:
+
+```text
+index.html
+```
+
+The Advocate build includes:
+
+- Conditional category, scenario, and sub-scenario intake
 - Workflow lock until **Load Workflow** is selected
-- Shared Tap to Confirm, PII, and IDV verification flow
-- Decision-based navigation with no generic Next Step bypass
-- Step-aware recommended actions with exact tool navigation
+- Shared Tap to Confirm, PII, and IDV verification
+- Decision-based workflow navigation
+- Step-aware recommended actions
+- Exact tool locations and fields to inspect
 - Step-aware Knowledge Article sections
 - Contextual Quick Text suggestions
-- Escalation tiles shown only after applicable probing outcomes
-- Mandatory call closing and post-call survey language
-- Previous step, restart, and resolution controls
+- Outcome-driven escalation visibility
+- Mandatory call closing and survey expectation
 - Searchable Knowledge Hub
-- Browser-local user profile and avatar initials
-- Passcode-protected Admin console
-- Workflow add, edit, duplicate, delete, import, and export functions
+- Browser-local display profile
 
-## Included Workflows
+It also displays this notice:
+
+> Internal workflow guidance only. This site never requests customer passwords, Cash PINs, one-time passcodes, payment credentials, or customer PII.
+
+The public page does not load or contain the Admin passcode form.
+
+## Admin Build
+
+Open locally:
+
+```text
+admin/index.html
+```
+
+Local access instructions are stored inside the ignored `admin/` folder. Admin access lasts for the current browser-tab session. The current protection is an MVP client-side gate, not production authentication.
+
+Administrators can:
+
+- Create workflows
+- Edit metadata and workflow steps
+- Add or remove decisions
+- Edit actions, tools, scripts, and article references
+- Duplicate or delete workflows
+- Import and export JSON backups
+- Export a deployment-ready Advocate data file
+
+## Publishing Workflow Updates
+
+The Admin build cannot directly write to files on disk because it runs in a browser. Use the deployment export:
+
+1. Open `admin/index.html`.
+2. Make and save the workflow changes.
+3. Test every decision branch in the Admin build.
+4. Select **Export Advocate Data**.
+5. The browser downloads:
+
+   ```text
+   workflow-data.js
+   ```
+
+6. Replace:
+
+   ```text
+   data/workflow-data.js
+   ```
+
+   with the downloaded file.
+
+7. Commit and push the updated `data/workflow-data.js`.
+8. Advocates refresh the website to receive the update.
+
+The Advocate build always reads the deployed workflow data and does not use Admin draft data stored in another browser.
+
+## Updating Advocate Files
+
+### Workflow-content change only
+
+Examples:
+
+- New or edited workflow
+- Updated actions
+- Updated scripts or Quick Text mappings
+- Changed decision path
+- Updated Knowledge Article reference
+
+Only distribute or publish:
+
+```text
+data/workflow-data.js
+```
+
+For a hosted website, advocates only need to refresh the page.
+
+For advocates using downloaded/offline copies, send them the new `workflow-data.js` and have them replace the existing file inside their `data` folder.
+
+### Application or design change
+
+Examples:
+
+- New interface control
+- Layout or color change
+- Workflow-engine behavior change
+- Security or navigation change
+
+Publish or redistribute:
+
+```text
+index.html
+app.js
+styles.css
+data/workflow-data.js
+data/misdirected-payment-workflow.js
+```
+
+For offline users, replacing the full Advocate folder is safer for application changes.
+
+## GitHub Pages Deployment
+
+Publish the repository root, which contains the Advocate build.
+
+The `admin/` directory is listed in `.gitignore` and should not be committed or deployed.
+
+Before pushing, verify:
+
+```text
+git status
+```
+
+The output should not include:
+
+```text
+admin/index.html
+admin/access-config.js
+```
+
+If the Admin folder was committed previously, remove it from Git tracking without deleting the local files:
+
+```powershell
+git rm -r --cached admin
+git commit -m "Remove local admin build from public deployment"
+git push
+```
+
+Do not disable browser security warnings or ask users to bypass them.
+
+## Safe Deployment Practices
+
+- Prefer a client-approved internal domain and hosting environment.
+- Use HTTPS.
+- Keep the repository private when it contains internal process material.
+- Do not publish the Admin build or passcode configuration.
+- Do not collect customer PII, passwords, PINs, OTPs, or payment credentials.
+- Keep the internal-use notice visible.
+- Validate the deployed URL with Google Search Console and Safe Browsing.
+- If the site was previously flagged, request a security review after deploying the cleaned Advocate build.
+
+## Current Workflows
 
 1. Account Access Recovery
 2. Missing Direct Deposit
@@ -29,217 +193,65 @@ The application is a static single-page app built with HTML, CSS, and vanilla Ja
 4. Unauthorized Cash Card Transaction
 5. Account Takeover
 
-The P2P Misdirected Payment workflow contains the most detailed implementation, including sender and recipient paths, payment status, old accounts, alias comparison, reimbursement review, escalation eligibility, and documentation.
+The P2P Misdirected Payment process currently has the deepest decision model.
 
-> The official Missing Direct Deposit process article was not included with the project sources. Its current guidance is marked as scope-based and pending validation against an approved Knowledge Article.
+> The official Missing Direct Deposit Knowledge Article was not supplied. Guidance for that workflow remains marked as scope-based and pending source validation.
 
-## Running the Tool
-
-Open [index.html](./index.html) in a modern browser.
-
-No installation, build process, backend, or development server is currently required.
-
-Keep the following files and folders together:
-
-```text
-Cash App Workflow Tool/
-|-- index.html
-|-- styles.css
-|-- app.js
-|-- README.md
-`-- data/
-    |-- access-config.js
-    |-- misdirected-payment-workflow.js
-    `-- workflow-data.js
-```
-
-## Using a Workflow
-
-1. Select an Issue Category.
-2. Select an available Scenario.
-3. Select the appropriate Sub-Scenario.
-4. Press **Load Workflow**.
-5. Complete the shared verification flow.
-6. Select a response to each probing question.
-7. Follow the step-aware Recommended Action, Knowledge Article, tools, and script guidance.
-8. Complete documentation and the required call closing.
-9. Mark the case as resolved during Call Closure.
-
-Changing an intake selection relocks the workflow. The advocate must press **Load Workflow** again to prevent a previously loaded process from being used with a new scenario.
-
-## Resource Tiles
+## Resource Behavior
 
 ### Recommended Action
 
-Shows:
+Shows only:
 
-- The tool or system to open
-- The exact area, status, field, or graph to inspect
-- Ordered advocate actions for the active step
+- Tool or system to open
+- Exact section, graph, status, or field to inspect
+- Ordered advocate actions
 
 ### Knowledge Base Articles
 
-Shows only the Knowledge Article and section relevant to the active step. **View More Articles** opens the Knowledge Hub using the closest available article or category filter.
+Shows the Knowledge Article and section relevant to the current step.
 
 ### Escalation
 
-Hidden unless the active path has reached a valid escalation condition. For example, a Misdirected Payment escalation appears only after probing confirms reimbursement-review eligibility, a truly misdirected payment, or an eligible payment to the official verified Cash App account.
+Remains hidden until probing reaches a valid escalation outcome.
 
 ### Approved Script / Verbiage
 
-Shows the approved step script and, when available, one explicitly mapped Quick Text. Suggestions use exact workflow-step matching rather than broad keyword matching.
+Uses exact workflow-step mappings. Customer-facing scripts must not reveal internal retry or information-attempt limits.
 
-Customer-facing scripts must not reveal internal retry or information-attempt limits. Those limits belong only in internal advocate actions and decision logic.
+### Call Closure
 
-## Required Call Closing
+Every `Call Closure` step requires the advocate to:
 
-Every `Call Closure` step automatically requires the advocate to:
-
-1. Ask whether the customer needs help with anything else.
-2. Pause and address any additional concern.
-3. Inform the customer that they will be transferred to a brief survey after the call.
-
-Quick Text suggestions are suppressed during Call Closure so they do not conflict with the required closing.
-
-## User Profile
-
-Select the profile in the top-right corner to change the displayed name and role.
-
-The profile is stored in browser `localStorage`. A static website cannot securely read the Windows or browser account name. A future authenticated version can populate this information from the signed-in user.
-
-## Admin Console
-
-Select **Admin** in the left navigation and enter the temporary MVP passcode:
-
-```text
-Admin2026!
-```
-
-Admin access lasts only for the current browser-tab session. Use **Lock Admin** to remove access immediately.
-
-Administrators can:
-
-- Create workflows
-- Edit workflow metadata
-- Add and remove steps
-- Edit actions, tools, scripts, and decision options
-- Duplicate or delete workflows
-- Import workflow data from JSON
-- Export the complete workflow dataset to JSON
-- Reset browser-local changes
-
-### Decision Option Format
-
-Admin decision options use:
-
-```text
-Button label => next step index
-```
-
-Example:
-
-```text
-Eligible for escalation => 6
-Not eligible => 8
-```
-
-Step indexes are zero-based within the issue-specific workflow. Test every branch after changing step order or decision targets.
-
-## Data Storage
-
-### Permanent Source Files
-
-- `app.js` contains application behavior, shared verification, the fallback data seed, Quick Text mappings, and step-aware resource guidance.
-- `data/misdirected-payment-workflow.js` contains the detailed Misdirected Payment workflow.
-- `data/workflow-data.js` is the external Phase 2 data hook.
-- `data/access-config.js` contains the temporary Admin passcode hash.
-
-### Browser-Local Changes
-
-Admin edits are saved in browser `localStorage`. They are available only in that browser profile and are not automatically written back to the project files.
-
-To move Admin changes to another computer or browser:
-
-1. Open Admin.
-2. Select **Export JSON**.
-3. Move the exported JSON file to the target environment.
-4. Open Admin on the target browser.
-5. Select **Import JSON**.
-
-## Sharing
-
-### ZIP or OneDrive
-
-Share the entire project folder, not only `index.html`. The CSS, JavaScript, and `data` folder are required.
-
-### GitHub Pages
-
-Upload the complete folder contents to a repository, then enable GitHub Pages for the repository branch and root directory.
-
-Before publishing, confirm that the Knowledge Article, script, and Quick Text content is approved for the intended audience and hosting location.
-
-## Security Limitations
-
-The current Admin passcode is a client-side MVP access gate. It prevents ordinary users from opening the Admin interface through the application, but it is not tamper-proof security.
-
-Because the application has no backend:
-
-- Users with file or developer-tool access can inspect client-side code.
-- There is no centrally managed user account or role.
-- Admin edits are not centrally synchronized.
-- The passcode hash is distributed with the static files.
-
-Production-grade access control requires:
-
-- User authentication
-- Server-side authorization
-- Admin and Advocate roles
-- Central database storage
-- Audit history
-- Draft, review, approval, and published workflow states
-- Server-side validation of workflow changes
-
-## Recommended Phase 2 Backend
-
-A future hosted version should separate:
-
-```text
-Frontend
-|-- Advocate workflow player
-|-- Knowledge Hub
-`-- Admin workflow builder
-
-Backend
-|-- Authentication and roles
-|-- Workflow API
-|-- Knowledge Article and Quick Text API
-|-- Versioning and approval history
-`-- Audit logs
-
-Database
-|-- Workflows
-|-- Steps and decision options
-|-- Knowledge references
-|-- Quick Text mappings
-|-- Published versions
-`-- User roles
-```
+1. Ask whether the customer needs anything else.
+2. Pause and address additional concerns.
+3. Explain that the customer will be transferred to a brief survey after the call.
 
 ## Validation Checklist
 
-Before publishing a workflow:
+Before publishing workflow data:
 
-- Confirm every decision option points to a valid step.
+- Confirm every decision points to a valid step.
 - Confirm the workflow cannot advance without a selected response.
 - Confirm Recommended Actions identify the correct tool location.
 - Confirm the Knowledge Article tile shows the correct section.
-- Confirm scripts match the active process step.
-- Confirm scripts do not provide clues or expose internal attempt limits.
+- Confirm scripts match the active step.
+- Confirm scripts do not provide hints or reveal internal attempt limits.
 - Confirm escalation appears only after eligibility is established.
-- Confirm sensitive information is not unnecessarily displayed or documented.
-- Confirm the required closing and survey expectation appear.
-- Confirm all content matches the latest approved Knowledge Articles.
+- Confirm sensitive information is not requested or unnecessarily displayed.
+- Confirm closure includes the additional-needs question and survey expectation.
+- Confirm content matches the latest approved Knowledge Articles.
 
-## Important
+## Production Security
 
-This tool is a workflow-guidance layer. Approved Knowledge Articles and operational policies remain the authoritative source.
+The local Admin passcode is not sufficient for production. A production Admin system requires:
+
+- Central authentication
+- Server-side Admin and Advocate roles
+- Database-backed workflow storage
+- Audit history
+- Draft, review, approval, and published states
+- Server-side validation
+- Secure deployment through an approved company environment
+
+The workflow tool is a guidance layer. Approved Knowledge Articles and operational policies remain authoritative.

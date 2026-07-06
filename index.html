@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cash App Advocate Workflow Assistant</title>
+    <title>Advocate Workflow Guidance Tool</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body data-app-mode="advocate">
     <div class="app-shell">
       <aside class="sidebar" aria-label="Primary navigation">
         <div class="brand">
-          <div class="brand-mark">$</div>
-          <strong>Cash App</strong>
+          <div class="brand-mark">W</div>
+          <strong>Workflow Guide</strong>
         </div>
 
         <nav class="nav">
@@ -20,8 +20,6 @@
           <button class="nav-button" data-view="dashboard" type="button">◴ Recent Workflows</button>
           <button class="nav-button" type="button">△ Escalation Matrix</button>
           <button class="nav-button" type="button">◇ Announcements</button>
-          <button class="nav-button" type="button">▥ Reports & Analytics</button>
-          <button class="nav-button" id="adminNavButton" data-view="admin" type="button">🔒 Admin</button>
         </nav>
 
         <section class="support-card">
@@ -36,7 +34,7 @@
         <header class="topbar">
           <div>
             <h1>Advocate Workflow Assistant</h1>
-            <p>Guided Resolution Tool</p>
+            <p>Internal Guided Resolution Tool</p>
           </div>
           <div class="top-actions" aria-label="Utility navigation">
             <button type="button">⌂ Home</button>
@@ -53,17 +51,20 @@
           </div>
         </header>
 
+        <aside class="safety-notice" role="note">
+          <strong>Internal workflow guidance only.</strong>
+          This site never requests customer passwords, Cash PINs, one-time passcodes, payment credentials, or customer PII.
+        </aside>
+
         <main class="main">
           <section class="view workflow-layout active" id="workflowView" aria-labelledby="stepTitle">
             <aside class="intake-column">
               <section class="intake-panel active" id="intakePanel" aria-label="Select an issue">
                 <h2>1. Select an Issue</h2>
-                <p>Choose the scenario that best matches the customer's concern.</p>
+                <p>Choose the scenario that best matches the customer’s concern.</p>
                 <label>
                   Line of Business (LOB)
-                  <select id="lobSelect">
-                    <option>Cash App</option>
-                  </select>
+                  <select id="lobSelect"><option>Cash App</option></select>
                 </label>
                 <label>
                   Channel
@@ -75,13 +76,7 @@
                 </label>
                 <label>
                   Issue Category (Call Driver)
-                  <select id="categorySelect">
-                    <option>Account Access</option>
-                    <option>Payments</option>
-                    <option>Cash Card</option>
-                    <option>Account Safety</option>
-                    <option>Identity Verification</option>
-                  </select>
+                  <select id="categorySelect"></select>
                 </label>
                 <label>
                   Scenario
@@ -89,13 +84,7 @@
                 </label>
                 <label>
                   Sub-Scenario
-                  <select id="subScenarioSelect">
-                    <option>Incorrect Password / Locked Account</option>
-                    <option>Unable to Verify</option>
-                    <option>Unauthorized Activity</option>
-                    <option>Missing or Misdirected Payment</option>
-                    <option>General Guidance</option>
-                  </select>
+                  <select id="subScenarioSelect"></select>
                 </label>
                 <button class="primary-action" id="loadWorkflow" type="button">Load Workflow</button>
               </section>
@@ -117,12 +106,12 @@
               </div>
 
               <section class="step-card" aria-live="polite">
-                <div class="step-count" id="stepMeta">Step 1 of 4: Verify Customer</div>
+                <div class="step-count" id="stepMeta">Step 1: Verify Customer</div>
                 <div class="question-card">
                   <div class="question-icon">?</div>
                   <div>
-                    <h3 id="stepTitle">Is the customer able to complete identity verification?</h3>
-                    <p id="stepBody">Choose the correct answer to proceed.</p>
+                    <h3 id="stepTitle">Select and load a workflow</h3>
+                    <p id="stepBody">Choose the correct response to proceed.</p>
                   </div>
                 </div>
                 <div class="decision-options" id="decisionOptions"></div>
@@ -160,7 +149,7 @@
               </section>
               <section class="resource-card escalation" id="escalationCard" hidden>
                 <h2>ⓘ Escalation</h2>
-                <p><strong>Escalate to:</strong> <span id="escalationTarget">Account Security Team</span></p>
+                <p><strong>Escalate to:</strong> <span id="escalationTarget"></span></p>
                 <p><strong>When:</strong> <span id="escalationCondition"></span></p>
               </section>
               <section class="resource-card">
@@ -172,10 +161,10 @@
 
           <section class="view" id="dashboardView" aria-labelledby="dashboardTitle">
             <div class="dashboard-header">
-              <p>Phase 1 MVP</p>
+              <p>Advocate View</p>
               <h2 id="dashboardTitle">Workflow coverage summary</h2>
             </div>
-            <div class="metric-grid" aria-label="MVP metrics">
+            <div class="metric-grid" aria-label="Workflow metrics">
               <article class="metric"><span>Workflows</span><strong id="workflowCount">0</strong></article>
               <article class="metric"><span>Knowledge Articles</span><strong id="articleCount">0</strong></article>
               <article class="metric"><span>Tools & Systems</span><strong id="toolCount">0</strong></article>
@@ -192,71 +181,6 @@
               <input class="search" id="knowledgeSearch" type="search" placeholder="Filter articles" />
             </div>
             <div class="knowledge-grid" id="knowledgeGrid"></div>
-          </section>
-
-          <section class="view admin-view" id="adminView" aria-labelledby="adminTitle">
-            <div class="admin-header">
-              <div>
-                <p>Admin Console</p>
-                <h2 id="adminTitle">Workflow Management</h2>
-              </div>
-              <div class="admin-actions">
-                <button class="secondary-action" id="lockAdminButton" type="button">Lock Admin</button>
-                <button class="secondary-action" id="newWorkflowButton" type="button">+ New Workflow</button>
-                <button class="secondary-action" id="duplicateWorkflowButton" type="button">Duplicate</button>
-                <button class="danger-action" id="deleteWorkflowButton" type="button">Delete</button>
-                <button class="secondary-action" id="exportWorkflowButton" type="button">Export JSON</button>
-                <label class="import-button">
-                  Import JSON
-                  <input id="importWorkflowInput" type="file" accept="application/json,.json" />
-                </label>
-              </div>
-            </div>
-
-            <div class="admin-layout">
-              <aside class="admin-list-panel">
-                <h3>Workflows</h3>
-                <div id="adminWorkflowList"></div>
-              </aside>
-
-              <section class="admin-editor">
-                <div class="editor-grid">
-                  <label>
-                    Workflow ID
-                    <input id="adminWorkflowId" type="text" placeholder="accountAccess" />
-                  </label>
-                  <label>
-                    Category
-                    <input id="adminWorkflowCategory" type="text" placeholder="Account Access" />
-                  </label>
-                  <label>
-                    Title
-                    <input id="adminWorkflowTitle" type="text" placeholder="Account Access Recovery" />
-                  </label>
-                  <label>
-                    Purpose
-                    <input id="adminWorkflowPurpose" type="text" placeholder="Assist customers who cannot access their account." />
-                  </label>
-                </div>
-
-                <label>
-                  Knowledge Articles
-                  <textarea id="adminWorkflowArticles" rows="3" placeholder="One article title per line"></textarea>
-                </label>
-
-                <div class="step-admin-header">
-                  <h3>Workflow Steps</h3>
-                  <button class="secondary-action" id="addStepButton" type="button">+ Add Step</button>
-                </div>
-                <div id="adminSteps"></div>
-
-                <div class="admin-save-row">
-                  <button class="primary-action" id="saveWorkflowButton" type="button">Save Workflow</button>
-                  <button class="secondary-action" id="resetAdminDataButton" type="button">Reset Local Changes</button>
-                  <span id="adminStatus" role="status"></span>
-                </div>
-              </section>
-            </div>
           </section>
         </main>
       </div>
@@ -281,34 +205,11 @@
         </label>
         <div class="dialog-actions">
           <button class="secondary-action" value="cancel" type="submit">Cancel</button>
-          <button class="primary-action" id="saveProfileButton" value="default" type="submit">Save Profile</button>
+          <button class="primary-action" value="default" type="submit">Save Profile</button>
         </div>
       </form>
     </dialog>
 
-    <dialog class="profile-dialog" id="adminAccessDialog">
-      <form method="dialog" id="adminAccessForm">
-        <div class="profile-dialog-header">
-          <div>
-            <p>Restricted Access</p>
-            <h2>Admin verification</h2>
-          </div>
-          <button class="dialog-close" value="cancel" type="submit" aria-label="Close">×</button>
-        </div>
-        <p class="dialog-description">Enter the admin passcode to manage workflow content.</p>
-        <label>
-          Admin Passcode
-          <input id="adminPasscodeInput" type="password" autocomplete="current-password" required />
-        </label>
-        <p class="access-error" id="adminAccessError" role="alert"></p>
-        <div class="dialog-actions">
-          <button class="secondary-action" value="cancel" type="submit">Cancel</button>
-          <button class="primary-action" id="unlockAdminButton" value="default" type="submit">Unlock Admin</button>
-        </div>
-      </form>
-    </dialog>
-
-    <script src="data/access-config.js"></script>
     <script src="data/workflow-data.js"></script>
     <script src="data/misdirected-payment-workflow.js"></script>
     <script src="app.js"></script>

@@ -297,6 +297,19 @@ button {
   min-width: 0;
 }
 
+.safety-notice {
+  padding: 10px 24px;
+  border-bottom: 1px solid #b9dfc3;
+  background: #effaf2;
+  color: #29402f;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.safety-notice strong {
+  color: var(--green-2);
+}
+
 .view {
   display: none;
 }
